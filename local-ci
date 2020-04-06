@@ -1,0 +1,13 @@
+#!/bin/bash
+
+CI_ROOT="$PWD"
+PROJECTS='gitlab jenkins'
+
+command='up -d'
+[ $# -gt 0 ] && command=$@
+
+for p in $PROJECTS
+do
+  cd $CI_ROOT/$p
+  docker-compose ${command}
+done
