@@ -1,0 +1,41 @@
+version: '3.7'
+services:
+  gitlab:
+    image: 'gitlab/gitlab-ce:latest'
+    restart: always
+    hostname: gitlab
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'http://gitlab.lo:8929'
+        gitlab_rails['gitlab_shell_ssh_port'] = 2224
+    ports:
+      - '8929:8929'
+      - '2224:2224'
+    volumes:
+      - '$PWD/gitlab/data/config:/etc/gitlab'
+      - '$PWD/gitlab/data/logs:/var/log/gitlab'
+      - '$PWD/gitlab/data/data:/var/opt/gitlab'
+      - '$PWD/gitlab/sshd_config:/assets/sshd_config'
+    networks:
+      localci:
+        aliases:
+          - gitlab.lo
+  jenkins-master:
+    image: 'jenkins/jenkins:lts'
+    hostname: jenkins
+    domainname: lo
+    ports:
+      - '8080:8080'
+      - '8443:8443'
+      - '50000:50000'
+    volumes:
+      - '$PWD/jenkins/data:/var/jenkins_home'
+    networks:
+      localci:
+        aliases:
+          - jenkins.lo
+volumes:
+  jenkins_data:
+    driver: local
+networks:
+  localci:
